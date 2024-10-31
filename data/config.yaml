@@ -1,0 +1,15 @@
+# Configuration file for preprocessing portfolio data
+
+tickers:
+  - "AAPL"
+  - "MSFT"
+  - "GOOGL"
+  - "AMZN"
+
+# Define the date range for historical data
+start_date: "2020-01-01"
+end_date: "2023-01-01"
+
+# Folder path where data files are stored
+folder_path: "./"
+

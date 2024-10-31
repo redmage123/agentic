@@ -1,0 +1,5 @@
+.venv
+services/client_service/frontend/node_modules
+tests/tca_tests/__pycache__/*
+tests/tca_tests/integration/__pycache__/*
+*.txt
