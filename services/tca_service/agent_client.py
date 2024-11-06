@@ -1,14 +1,18 @@
 from concurrent import futures
+from typing import Any, Dict
+
 import grpc
-from typing import Dict, Any
+from models.hnn_model import process_hnn_prediction
+from ..logging_service import logger
 
-import hnn_agent_pb2
-import hnn_agent_pb2_grpc
-from hnn_model import process_hnn_prediction
-from logging_service import logger
+from ..protos import hamiltonian_agent_pb2
+from ..protos import hamiltonian_agent_pb2_grpc
+from utils.grpc_clients import get_hnn_prediction
 
-class HNNPredictionService(hnn_agent_pb2_grpc.HNNPredictionServiceServicer):
-    def Predict(self, request: hnn_agent_pb2.PredictionRequest, context) -> hnn_agent_pb2.PredictionResponse:
+
+class HNNPredictionService(hamiltonian_agent_pb2_grpc.HamiltonianPredictionServiceServicer):
+    def Predict(self, request: hamiltonian_agent_pb2.PredictionRequest, context) -> hamiltonian_agent_pb2.PredictionResponse:
+
         """
         Handles prediction requests from the TCA.
         
@@ -26,7 +30,7 @@ class HNNPredictionService(hnn_agent_pb2_grpc.HNNPredictionServiceServicer):
         prediction: Dict[str, Any] = process_hnn_prediction({"input_data": input_data})
         
         # Construct response using the gRPC response type
-        response = hnn_agent_pb2.PredictionResponse(
+        response = hamiltonian_agent_pb2.PredictionResponse(
             prediction=prediction["prediction"],
             details=prediction["details"]
         )
@@ -39,7 +43,7 @@ def serve() -> None:
     Starts the gRPC server to listen for TCA requests.
     """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    hnn_agent_pb2_grpc.add_HNNPredictionServiceServicer_to_server(HNNPredictionService(), server)
+    hamiltonian_agent_pb2_grpc.add_HNNPredictionServiceServicer_to_server(HNNPredictionService(), server)
     server.add_insecure_port("[::]:5002")
     logger.info("Starting HNN Agent gRPC service on port 5002")
     server.start()
@@ -47,4 +51,5 @@ def serve() -> None:
 
 if __name__ == "__main__":
     serve()
+
 

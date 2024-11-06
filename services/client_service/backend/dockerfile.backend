@@ -5,11 +5,11 @@ FROM python:3.12
 WORKDIR /app
 
 # Copy requirements and install dependencies
-COPY backend/requirements.txt .
+COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend files
-COPY backend/ .
+COPY . /app/
 
 # Expose port 5000
 EXPOSE 5000

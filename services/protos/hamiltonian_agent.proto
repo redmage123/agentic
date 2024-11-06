@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package hamiltonian_service;
+
+// Service for Hamiltonian Neural Network predictions
+service HamiltonianPredictionService {
+  rpc Predict (PredictionRequest) returns (PredictionResponse);
+}
+
+// Message defining the input structure for predictions
+message PredictionRequest {
+  string input_data = 1; // Input data for Hamiltonian Neural Network
+}
+
+// Message defining the structure of the prediction response
+message PredictionResponse {
+  string prediction = 1;       // Prediction result
+  string details = 2;      // Additional details
+}
+

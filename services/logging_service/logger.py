@@ -2,7 +2,10 @@ import logging
 from logging import Logger
 from logging.handlers import RotatingFileHandler
 
-def setup_logger(name: str = "TCA", log_file: str = "tca_service.log", level: int = logging.INFO) -> Logger:
+
+def setup_logger(
+    name: str = "TCA", log_file: str = "tca_service.log", level: int = logging.INFO
+) -> Logger:
     """
     Sets up a centralized logger with both console and file output.
 
@@ -18,9 +21,13 @@ def setup_logger(name: str = "TCA", log_file: str = "tca_service.log", level: in
     logger.setLevel(level)
 
     # File handler with rotation
-    file_handler = RotatingFileHandler(log_file, maxBytes=5 * 1024 * 1024, backupCount=5)
+    file_handler = RotatingFileHandler(
+        log_file, maxBytes=5 * 1024 * 1024, backupCount=5
+    )
     file_handler.setLevel(level)
-    file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
 
@@ -33,6 +40,6 @@ def setup_logger(name: str = "TCA", log_file: str = "tca_service.log", level: in
 
     return logger
 
+
 # Initialize a logger instance that can be imported elsewhere
 logger: Logger = setup_logger()
-

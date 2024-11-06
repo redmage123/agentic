@@ -2,6 +2,7 @@ import requests
 
 TCA_URL = "http://tca-service:5001"  # Update with TCA's service URL
 
+
 def get_prediction(data):
     """
     Sends prediction data to the TCA and returns the response.

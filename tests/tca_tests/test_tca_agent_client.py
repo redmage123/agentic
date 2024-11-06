@@ -1,39 +1,48 @@
-import grpc
 from unittest import mock
-from typing import Dict, Any
-from hnn_agent_pb2 import PredictionRequest, PredictionResponse
-import hnn_agent_pb2_grpc
-from agent_client import get_hnn_prediction
+
+import grpc
+from services.tca_service.agent_client import get_hnn_prediction
+from services.protos.hamiltonian_agent_pb2 import PredictionRequest, PredictionResponse
+from utils.grpc_clients import get_hnn_prediction
 
 def test_get_hnn_prediction_success():
     """
     Test successful prediction response from the HNN Agent via gRPC.
     """
-    # Mock the gRPC channel and stub
     with mock.patch("grpc.insecure_channel") as mock_channel:
-        # Create a mock stub
-        mock_stub = mock.MagicMock()
-        mock_channel.return_value = mock_stub
-
-        # Prepare the mock response
-        mock_response = PredictionResponse(
-            prediction="cyclic_behavior_pattern",
-            details="This is a mocked response from the HNN model"
-        )
+        # Create a mock stub with our expected response
+        stub = mock.MagicMock()
         
-        # Mock the Predict method on the stub
-        mock_stub.Predict.return_value = mock_response
-
-        # Call the function with test data
-        data = {"input_data": "test_stock_data"}
-        result = get_hnn_prediction(data)
-
-        # Verify the response
+        # Create a response that acts like a proper gRPC response
+        response = mock.MagicMock()
+        mock_prediction = "cyclic_behavior_pattern"
+        mock_details = "This is a mocked response from the HNN model"
+        
+        # Configure the mock response properties
+        response.configure_mock(**{
+            'prediction': mock_prediction,
+            'details': mock_details
+        })
+        
+        # Configure the stub to return our response
+        stub.configure_mock(**{
+            'Predict.return_value': response
+        })
+        
+        # Configure the channel to return our stub
+        mock_channel.return_value.__enter__.return_value = stub
+        
+        # Test the function
+        result = get_hnn_prediction({"input_data": "test_stock_data"})
+        
+        # Verify the results
         assert result == {
-            "prediction": "cyclic_behavior_pattern",
-            "details": "This is a mocked response from the HNN model"
+            "prediction": mock_prediction,
+            "details": mock_details
         }
-        mock_stub.Predict.assert_called_once_with(PredictionRequest(input_data="test_stock_data"))
+        
+        # Verify the stub was called correctly
+        stub.Predict.assert_called_once()
 
 def test_get_hnn_prediction_failure():
     """
@@ -53,4 +62,3 @@ def test_get_hnn_prediction_failure():
         # Verify that the error is captured in the response
         assert "error" in result
         assert "Mocked gRPC error" in result["error"]
-

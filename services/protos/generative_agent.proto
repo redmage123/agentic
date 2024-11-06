@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package generative_service;
+
+// Service for Generative Neural Network predictions
+service GenerativePredictionService {
+  rpc Predict (PredictionRequest) returns (PredictionResponse);
+}
+
+// Message defining the input structure for predictions
+message PredictionRequest {
+  string input_data = 1; // Input data for Generative Neural Network
+}
+
+// Message defining the structure of the prediction response
+message PredictionResponse {
+  string result = 1;       // Prediction result
+  string details = 2;      // Additional details
+}

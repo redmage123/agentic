@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package perturbation_service;
+
+// Service for Perturbation Neural Network predictions
+service PerturbationPredictionService {
+  rpc Predict (PredictionRequest) returns (PredictionResponse);
+}
+
+// Message defining the input structure for predictions
+message PredictionRequest {
+  string input_data = 1; // Input data for Perturbation Neural Network
+}
+
+// Message defining the structure of the prediction response
+message PredictionResponse {
+  string result = 1;       // Prediction result
+  string details = 2;      // Additional details
+}
