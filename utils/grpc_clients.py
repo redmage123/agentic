@@ -21,11 +21,12 @@ def get_hnn_prediction(data: Dict[str, Any]) -> Dict[str, Any]:
             
             # Make gRPC call
             response = stub.Predict(request)
-            
             # Return formatted response
             return {
                 "prediction": response.prediction,
                 "details": response.details
             }
+    except grpc.RpcError as e:
+        return {"error": str(e)}
     except Exception as e:
         return {"error": str(e)}

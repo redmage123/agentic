@@ -1,5 +1,6 @@
 import pytest
 import grpc
+from unittest import mock
 from unittest.mock import Mock, patch
 from services.client_service.backend.app import app, get_prediction_from_tca
 from services.protos.hamiltonian_agent_pb2 import PredictionResponse
@@ -53,14 +54,16 @@ def test_predict_endpoint_success(client, mock_grpc_stub):
 def test_status_endpoint_tca_down(client):
     """Test status endpoint when TCA is unavailable"""
     with patch('grpc.insecure_channel') as mock_channel:
-        # Setup the mock to raise an error when checking channel readiness
-        mock_channel_instance = mock_channel.return_value
-        mock_channel_instance.channel_ready.side_effect = grpc.RpcError("Connection failed")
+        # Create a context manager mock
+        context_mock = mock.MagicMock()
+        # Make channel_ready raise an exception
+        context_mock.channel_ready.side_effect = grpc.RpcError("Connection failed")
+        # Set up the context manager
+        mock_channel.return_value.__enter__.return_value = context_mock
+        mock_channel.return_value.__exit__.return_value = None
         
-        # Make the request
         response = client.get('/api/status')
         
-        # Verify response
         assert response.status_code == 200
         assert response.json["status"] == "Backend service is running"
         assert response.json["tca_service"] == "disconnected"
@@ -77,3 +80,4 @@ def test_predict_endpoint_grpc_error(client, mock_grpc_stub):
     response = client.post('/api/predict', json={"inputData": "test_data"})
     assert "error" in response.json
     assert "gRPC error" in response.json["error"]
+
