@@ -1,0 +1,47 @@
+# c:/home/bbrel/agentic/conf/defaults.yaml
+
+# Base defaults that always load
+defaults:
+  # Common schemas first
+  - schema/common
+
+  # Service-specific schemas based on service_name variable
+  - schema/${service_name}: ???    # Will resolve to schema/logging.yaml, schema/tca.yaml, etc.
+  
+  # Service-specific components based on service_name variable
+  - components/${service_name}: ???    # Will resolve to components/logging/default.yaml, etc.
+  
+  # Environment configuration
+  - env: ${env:ENV,development}
+  
+  # Allow final overrides
+  - _self_
+
+# Optional groups for running multiple services
+defaults_logging:
+  - schema/common
+  - schema/logging
+  - components/logging
+  - env: ${env:ENV,development}
+  - _self_
+
+defaults_tca:
+  - schema/common
+  - schema/tca
+  - components/tca
+  - env: ${env:ENV,development}
+  - _self_
+
+defaults_registry:
+  - schema/common
+  - schema/registry
+  - components/registry
+  - env: ${env:ENV,development}
+  - _self_
+
+defaults_hamiltonian:
+  - schema/common
+  - schema/hamiltonian
+  - components/hamiltonian
+  - env: ${env:ENV,development}
+  - _self_

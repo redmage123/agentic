@@ -1,0 +1,11 @@
+# c:/home/bbrel/agentic/conf/components/logging/development.yaml
+# Development-specific component configuration
+service:
+  log_handling:
+    default_level: DEBUG
+    format: DETAILED
+    retention_days: 7
+    
+  processing:
+    batch_size: 50
+    max_workers: 2

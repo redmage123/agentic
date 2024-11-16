@@ -1,0 +1,23 @@
+# c:/home/bbrel/agentic/conf/components/logging/default.yaml
+# Base configuration for logging service
+defaults:
+  - /schema/logging
+
+service:
+  name: "logging_service"
+  host: localhost
+  port: 50051
+  metrics_enabled: true
+  
+  log_handling:
+    format: DETAILED
+    handlers:
+      file:
+        enabled: true
+        path: ${logging_service.log_handling.root_dir}/service.log
+        rotation:
+          max_bytes: ${logging_service.log_handling.rotation.max_bytes}
+          backup_count: ${logging_service.log_handling.rotation.backup_count}
+      console:
+        enabled: true
+

@@ -1,0 +1,22 @@
+# c:/home/bbrel/agentic/conf/env/development.yaml
+# Environment-level configuration
+defaults:
+  - components/logging/development  # This pulls in the component's development config
+
+# Additional environment-specific overrides
+logging_service:
+  host: localhost
+  port: 50051
+  log_handling:
+    root_dir: ${oc.env:LOG_DIR,${hydra.runtime.cwd}/logs/dev}
+    console_output: true
+  
+  registry:
+    url: localhost:50050
+    heartbeat_interval: 15
+    retry_count: 5
+
+  monitoring:
+    metrics_enabled: true
+    metrics_port: 9090
+    debug_endpoints: true

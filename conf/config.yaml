@@ -1,0 +1,19 @@
+# c:/home/bbrel/agentic/conf/config.yaml
+defaults:
+  - schema/common
+  - components/${service_name}/default
+  - env: ${env:ENV,development}
+  - _self_
+
+hydra:
+  run:
+    dir: ${oc.env:LOG_DIR,${original_cwd}/logs}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    chdir: true
+  sweep:
+    dir: ${oc.env:LOG_DIR,${original_cwd}/logs}/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+project:
+  name: "agentic"
+  version: "1.0.0"
+

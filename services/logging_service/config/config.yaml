@@ -1,0 +1,99 @@
+# services/logging_service/config/config.yaml
+defaults:
+  - base_config
+  - logging: default
+  - override hydra/launcher: basic
+
+service:
+  name: logging_service
+  version: "1.0"
+  port: 50051
+
+logging:
+  root_dir: ${oc.env:LOG_DIR,logs}
+  rotation:
+    max_bytes: 10485760  # 10MB
+    backup_count: 5
+  retention_days: 30
+  default_level: INFO
+  format: DETAILED
+
+registry:
+  url: ${oc.env:REGISTRY_URL,localhost:50050}
+  heartbeat_interval: 30
+
+processing:
+  batch_size: 100
+  max_workers: 4
+  buffer_size: 1000
+
+# services/logging_service/config/logging/default.yaml
+format: DETAILED
+handlers:
+  file:
+    enabled: true
+    path: ${logging.root_dir}/service.log
+    rotation:
+      max_bytes: ${logging.rotation.max_bytes}
+      backup_count: ${logging.rotation.backup_count}
+  console:
+    enabled: true
+    format: SIMPLE
+
+# services/logging_service/domain/config.py
+from dataclasses import dataclass
+from enum import Enum
+from typing import Optional, Dict, Any
+from pathlib import Path
+from omegaconf import DictConfig
+import hydra
+from hydra.core.config_store import ConfigStore
+
+class LogFormat(Enum):
+    SIMPLE = "SIMPLE"
+    DETAILED = "DETAILED"
+    JSON = "JSON"
+    OPENTELEMETRY = "OPENTELEMETRY"
+
+@dataclass
+class RotationConfig:
+    max_bytes: int
+    backup_count: int
+
+@dataclass
+class HandlerConfig:
+    enabled: bool
+    format: LogFormat
+    path: Optional[Path] = None
+    rotation: Optional[RotationConfig] = None
+
+@dataclass
+class LoggingConfig:
+    root_dir: Path
+    default_level: str
+    format: LogFormat
+    retention_days: int
+    handlers: Dict[str, HandlerConfig]
+
+@dataclass
+class RegistryConfig:
+    url: str
+    heartbeat_interval: int
+
+@dataclass
+class ProcessingConfig:
+    batch_size: int
+    max_workers: int
+    buffer_size: int
+
+@dataclass
+class ServiceConfig:
+    name: str
+    version: str
+    port: int
+    logging: LoggingConfig
+    registry: RegistryConfig
+    processing: ProcessingConfig
+
+cs = ConfigStore.instance()
+cs.store(name="service_config", node=ServiceConfig)

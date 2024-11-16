@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: agentic
 Version: 0.1.0
-Summary: Stock prediction microservices with ML agents
+Summary: Multi-Agent AI Architecture Demonstration System
 Home-page: UNKNOWN
 Author: Your Name
 License: UNKNOWN
@@ -10,5 +10,8 @@ Platform: UNKNOWN
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
 Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Requires-Python: >=3.9
 Provides-Extra: dev
+Provides-Extra: monitoring

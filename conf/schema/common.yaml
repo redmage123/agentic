@@ -1,0 +1,16 @@
+# c:/home/bbrel/agentic/conf/schema/common.yaml
+service_base:
+  name: ???                # Required: must be provided by component config
+  version: ${project.version}
+  host: localhost         # Default value provided
+  port: ???              # Required: must be provided by component config
+  metrics_enabled: true   # Default value provided
+  health_check:
+    enabled: true
+    interval: 30
+    timeout: 5
+
+registry:
+  url: ${oc.env:REGISTRY_URL,localhost:50050}
+  heartbeat_interval: 30
+  retry_count: 3
