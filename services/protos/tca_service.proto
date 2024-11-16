@@ -1,0 +1,105 @@
+// microservices/protos/tca_service.proto
+syntax = "proto3";
+
+package tca;
+
+service TrafficControlService {
+    // Main request handling
+    rpc ProcessRequest (PredictionRequest) returns (PredictionResponse);
+    
+    // Agent management
+    rpc RegisterAgent (AgentRegistration) returns (RegistrationResponse);
+    rpc DeregisterAgent (DeregistrationRequest) returns (DeregistrationResponse);
+    
+    // Health and status
+    rpc GetStatus (StatusRequest) returns (StatusResponse);
+    rpc UpdateAgentHealth (HealthUpdate) returns (HealthResponse);
+}
+
+message PredictionRequest {
+    string request_id = 1;
+    string input_data = 2;
+    RequestType type = 3;
+    map<string, string> metadata = 4;
+    repeated string preferred_agents = 5;  // Optional agent preferences
+}
+
+message PredictionResponse {
+    string request_id = 1;
+    repeated AgentPrediction predictions = 2;
+    string aggregated_result = 3;
+    float confidence_score = 4;
+    map<string, string> metadata = 5;
+}
+
+message AgentPrediction {
+    string agent_id = 1;
+    string prediction = 2;
+    float confidence = 3;
+    int64 processing_time = 4;
+}
+
+enum RequestType {
+    UNKNOWN = 0;
+    TIME_SERIES = 1;
+    CLASSIFICATION = 2;
+    GENERATION = 3;
+}
+
+message AgentRegistration {
+    string agent_id = 1;
+    string agent_type = 2;
+    string host = 3;
+    int32 port = 4;
+    repeated RequestType supported_types = 5;
+    map<string, string> capabilities = 6;
+}
+
+message RegistrationResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message DeregistrationRequest {
+    string agent_id = 1;
+}
+
+message DeregistrationResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message StatusRequest {
+    string agent_id = 1;  // Optional, if empty returns status for all agents
+}
+
+message StatusResponse {
+    repeated AgentStatus agents = 1;
+    SystemMetrics metrics = 2;
+}
+
+message AgentStatus {
+    string agent_id = 1;
+    string status = 2;  // ACTIVE, INACTIVE, DEGRADED
+    float load = 3;
+    int32 pending_requests = 4;
+    map<string, string> metrics = 5;
+}
+
+message SystemMetrics {
+    int32 total_requests = 1;
+    int32 active_requests = 2;
+    float average_response_time = 3;
+    map<string, float> agent_utilization = 4;
+}
+
+message HealthUpdate {
+    string agent_id = 1;
+    string status = 2;
+    map<string, string> metrics = 3;
+}
+
+message HealthResponse {
+    bool acknowledged = 1;
+    string message = 2;
+}

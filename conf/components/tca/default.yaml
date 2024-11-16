@@ -1,0 +1,35 @@
+# conf/components/tca/default.yaml
+service:
+  name: tca_service
+  host: localhost
+  port: 50053
+  
+  routing:
+    strategy: weighted_round_robin  # or: least_loaded, response_time, capability_based
+    timeout: 30  # seconds
+    max_retries: 3
+    
+  load_balancing:
+    max_requests_per_agent: 100
+    health_threshold: 0.8
+    cooldown_period: 60  # seconds
+    
+  agent_management:
+    health_check_interval: 30
+    deregister_after_missing: 3
+    reconnect_attempts: 3
+    
+  response_aggregation:
+    strategy: weighted_average  # or: majority_vote, highest_confidence
+    minimum_responses: 1
+    timeout: 10  # seconds
+    
+  circuit_breaker:
+    failure_threshold: 5
+    reset_timeout: 60
+    
+  monitoring:
+    metrics_enabled: true
+    metrics_port: 8082
+    health_check_enabled: true
+    health_check_port: 8083

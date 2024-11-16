@@ -1,0 +1,36 @@
+# conf/schema/tca.yaml
+tca_service:
+  _target_: microservices.tca_service.domain.config.TCAServiceConfig
+  name: str
+  host: str
+  port: int
+  
+  routing:
+    strategy: str
+    timeout: int
+    max_retries: int
+    
+  load_balancing:
+    max_requests_per_agent: int
+    health_threshold: float
+    cooldown_period: int
+    
+  agent_management:
+    health_check_interval: int
+    deregister_after_missing: int
+    reconnect_attempts: int
+    
+  response_aggregation:
+    strategy: str
+    minimum_responses: int
+    timeout: int
+    
+  circuit_breaker:
+    failure_threshold: int
+    reset_timeout: int
+    
+  monitoring:
+    metrics_enabled: bool
+    metrics_port: int
+    health_check_enabled: bool
+    health_check_port: int

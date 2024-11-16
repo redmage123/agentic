@@ -70,6 +70,10 @@ setup(
         "structlog>=23.1.0",      # For structured logging
         "prometheus-client>=0.17.1",  # For metrics
         "psutil>=5.9.0",          # For system metrics
+
+        # Registry service
+        "python-etcd3>=0.12.0",
+        "tenacity>=8.2.2",  # For retry logic
         
         # Async support
         "aiohttp>=3.8.5",

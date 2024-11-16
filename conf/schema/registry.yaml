@@ -1,0 +1,22 @@
+# conf/schema/registry.yaml
+registry_service:
+  _target_: microservices.registry_service.domain.config.RegistryServiceConfig
+  name: registry_service
+  host: str
+  port: int
+  
+  etcd:
+    hosts: list
+    port: int
+    timeout: int
+    retry:
+      max_attempts: int
+      initial_delay: int
+      max_delay: int
+    
+  health_check:
+    interval: int
+    timeout: int
+    
+  lease:
+    ttl: int

@@ -37,10 +37,10 @@ from typing import Dict, Any
 from unittest.mock import Mock, AsyncMock
 from omegaconf import OmegaConf
 
-from microservices.logging_service.domain.models import LogEntry, LogLevel
-from microservices.logging_service.infrastructure.file_handler import FileLogWriter
-from microservices.logging_service.domain.interfaces import LogWriter, RegistryClient
-from microservices.logging_service.infrastructure.service_factory import LoggingServiceFactory
+from services.logging_service.domain.models import LogEntry, LogLevel
+from services.logging_service.infrastructure.file_handler import FileLogWriter
+from services.logging_service.domain.interfaces import LogWriter, RegistryClient
+from services.logging_service.infrastructure.service_factory import LoggingServiceFactory
 
 @pytest.fixture
 def test_config():

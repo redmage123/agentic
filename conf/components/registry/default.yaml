@@ -1,0 +1,22 @@
+# conf/components/registry/default.yaml
+service:
+  name: registry_service
+  host: localhost
+  port: 50051
+  
+  etcd:
+    hosts:
+      - localhost
+    port: 2379
+    timeout: 5
+    retry:
+      max_attempts: 3
+      initial_delay: 1
+      max_delay: 10
+    
+  health_check:
+    interval: 30
+    timeout: 5
+    
+  lease:
+    ttl: 60  # Time in seconds for service registration lease
