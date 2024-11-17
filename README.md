@@ -123,6 +123,124 @@ http://localhost:3000
 - Confidence-weighted aggregation
 - Ensemble methods
 
+## Generative AI Agent Prompts
+
+The system uses a structured, modular prompt system for the generative AI agent located in `services/generative_agent/prompts/`. This modular approach allows for:
+- Better maintainability
+- Focused, specific prompts
+- Flexible prompt chaining
+- Easier testing and validation
+
+### Prompt Structure
+
+``` mermaid
+graph TB
+    subgraph "Prompt System Architecture"
+        A[Financial Analysis Base Prompt] --> B{Prompt Router}
+
+        subgraph "Core Analysis Frameworks"
+            C[Tree of Thoughts<br>Framework]
+            D[Logic of Thoughts<br>Framework]
+        end
+
+        subgraph "Specialized Analysis"
+            E[Pattern Recognition]
+            F[Risk Evaluation]
+            G[Market Context]
+        end
+
+        subgraph "Output Processing"
+            H[Synthesis]
+            I[Validation]
+        end
+
+        B --> C
+        B --> D
+        B --> E
+        B --> F
+        B --> G
+
+        C --> H
+        D --> H
+        E --> H
+        F --> H
+        G --> H
+
+        H --> I
+
+        I --> J[Final Response]
+
+        %% Prompt Chain Configurations
+        subgraph "Chain Configurations"
+            K[Default Chain]
+            L[Pattern Analysis]
+            M[Full Analysis]
+        end
+
+        B -.-> K
+        B -.-> L
+        B -.-> M
+
+        class A,B,C,D,E,F,G,H,I primary
+        class K,L,M secondary
+    end
+
+classDef primary fill:#f9f,stroke:#333,stroke-width:2px
+classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+#### Financial Analysis Prompts
+Located in `services/generative_agent/prompts/financial_analysis/`:
+- `base.prompt`: Core financial analyst identity and approach
+- `pattern_recognition.prompt`: Specialized pattern analysis techniques
+- `market_context.prompt`: Market analysis framework
+- `risk_evaluation.prompt`: Risk analysis methodologies
+- `tot_framework.prompt`: Tree of Thoughts reasoning framework
+- `lot_framework.prompt`: Logic of Thoughts analysis structure
+- `synthesis.prompt`: Results synthesis and communication
+- `validation.prompt`: Data and conclusion validation
+
+Each prompt is designed to:
+- Focus on a specific aspect of financial analysis
+- Maintain consistency in analysis approach
+- Provide structured, actionable outputs
+- Include validation and confidence measures
+
+### Using Prompts
+
+The prompts can be used individually or chained together based on the analysis needs. Common combinations are configured in `conf/components/generative/default.yaml`:
+
+- Default Chain: Base analysis with structured reasoning
+- Pattern Analysis: Focused on pattern recognition and validation
+- Full Analysis: Comprehensive analysis using all prompt components
+
+### Extending Prompts
+
+To add new prompts:
+1. Create new .prompt file in appropriate directory
+2. Add prompt configuration to yaml config
+3. Add prompt tests in test suite
+4. Document prompt purpose and usage
+
+### Prompt Development Guidelines
+
+When creating or modifying prompts:
+- Keep each prompt focused and specific
+- Include clear input/output expectations
+- Consider chain compatibility
+- Add appropriate validation steps
+- Document prompt purpose
+- Include example usage
+
+### Testing Prompts
+
+Prompts are tested through:
+- Unit tests for loading and validation
+- Integration tests for prompt chaining
+- Response quality validation
+- Performance benchmarking
+
+See `tests/test_generative_agent/test_prompts/` for test implementations.
 ## Development
 
 ### Adding New Agents
