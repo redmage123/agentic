@@ -133,7 +133,7 @@ The system uses a structured, modular prompt system for the generative AI agent 
 
 ### Prompt Structure
 
-``` mermaid
+```mermaid
 graph TB
     subgraph "Prompt System Architecture"
         A[Financial Analysis Base Prompt] --> B{Prompt Router}
@@ -187,9 +187,10 @@ graph TB
 
 classDef primary fill:#f9f,stroke:#333,stroke-width:2px
 classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
-```
-``` mermaid
 
+```
+
+```mermaid
 sequenceDiagram
     participant U as User Query
     participant B as Base Prompt
@@ -227,10 +228,9 @@ sequenceDiagram
     deactivate S
     deactivate F
     deactivate B
-    ```
+```
 
- ``` mermaid
-
+```mermaid
 flowchart TD
     subgraph "Prompt Composition"
         A[Base Prompt] --> B{Analysis Type}
@@ -266,7 +266,8 @@ flowchart TD
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C,D,E fill:#bfb,stroke:#333,stroke-width:2px
 
-   ``` 
+```
+
 #### Financial Analysis Prompts
 Located in `services/generative_agent/prompts/financial_analysis/`:
 - `base.prompt`: Core financial analyst identity and approach
