@@ -187,7 +187,8 @@ graph TB
 
 classDef primary fill:#f9f,stroke:#333,stroke-width:2px
 classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
-
+```
+``` mermaid
 
 sequenceDiagram
     participant U as User Query
@@ -226,6 +227,9 @@ sequenceDiagram
     deactivate S
     deactivate F
     deactivate B
+    ```
+
+ ``` mermaid
 
 flowchart TD
     subgraph "Prompt Composition"
