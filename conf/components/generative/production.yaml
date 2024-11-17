@@ -1,0 +1,17 @@
+# conf/components/generative/production.yaml
+service:
+  llm:
+    temperature: 0.7
+    max_tokens: 2000
+    timeout: 30
+  
+  cache:
+    enabled: true
+    ttl: 3600
+  
+  rate_limiting:
+    requests_per_minute: ${oc.env:LLM_RATE_LIMIT,50}
+    
+  monitoring:
+    enabled: true
+    metrics_port: ${oc.env:METRICS_PORT,8086}

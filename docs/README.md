@@ -67,6 +67,14 @@ npm install
 ./setup.sh
 docker-compose up
 ```
+## Environment Setup
+
+This project requires certain environment variables to be set. To configure:
+
+1. Copy the environment template:
+   ```bash
+   cp .env.template .env
+   ```
 
 ## Usage
 

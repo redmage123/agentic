@@ -1,0 +1,20 @@
+# synthesis.prompt
+Structure your analysis output following these guidelines:
+
+1. Key Findings:
+   - Primary conclusions
+   - Confidence levels
+   - Critical factors
+   - Time sensitivity
+
+2. Supporting Evidence:
+   - Data points
+   - Pattern evidence
+   - Historical analogs
+   - Market context
+
+3. Recommendations:
+   - Clear actions
+   - Priority order
+   - Risk factors
+   - Implementation notes

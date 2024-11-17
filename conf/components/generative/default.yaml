@@ -1,0 +1,102 @@
+# conf/components/generative/default.yaml
+service:
+  name: generative_agent
+  host: localhost
+  port: 50056
+  
+  llm:
+    provider: "anthropic"
+    model: "claude-3-opus-20240229"
+    api_key: ${oc.env:ANTHROPIC_API_KEY}
+    temperature: 0.7
+    max_tokens: 2000
+    timeout: 30
+    retry:
+      max_attempts: 3
+      initial_delay: 1
+      max_delay: 5
+    # Add system prompt configuration
+    prompt_chains:
+      financial_analysis:
+        base: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/base.prompt'}
+        pattern_recognition: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/pattern_recognition.prompt'}
+        risk_recognition: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/risk_analysis.prompt'}
+        tot_framework: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/tot_framework.prompt'}
+        lot_framework: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/lot_framework.prompt'}
+        synthesis: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/synthesis.prompt'}
+        validation: ${oc.read:'../../services/generative_agent/prompts/financial_analysis/validation.prompt'}
+    
+    prompt_composition:
+      default_chain: ["base", "tot_framework", "lot_framework", "synthesis"]
+      pattern_analysis: ["base", "pattern_recognition", "validation", "synthesis"]
+      full_analysis: ["base", "pattern_recognition", "risk_analysis","tot_framework", "lot_framework", "validation", "synthesis"]
+    
+  # Add response formatting
+  output_format:
+    type: "json"  # or "text" or "structured"
+    include_confidence: true
+    include_reasoning: true
+    include_sources: true
+    
+  # Add input preprocessing
+  preprocessing:
+    clean_text: true
+    extract_entities: true
+    validate_symbols: true
+    max_input_length: 4000
+    
+  # Add integration settings
+  integrations:
+    market_data:
+      provider: ${oc.env:MARKET_DATA_PROVIDER,yfinance}
+      api_key: ${oc.env:MARKET_DATA_API_KEY}
+      cache_ttl: 300  # 5 minutes
+    news_feed:
+      enabled: true
+      sources: ["reuters", "bloomberg", "ft"]
+      update_interval: 300
+      
+  # Add error handling
+  error_handling:
+    retry_on_timeout: true
+    retry_on_rate_limit: true
+    fallback_enabled: true
+    fallback_model: "claude-3-sonnet-20240229"
+    
+  # Add request priority
+  priority:
+    levels: ["low", "medium", "high", "critical"]
+    timeout_by_priority:
+      low: 30
+      medium: 45
+      high: 60
+      critical: 90
+    
+  # Add response caching
+  cache:
+    enabled: true
+    ttl: 3600  # 1 hour
+    max_size: 1000
+    exclude_patterns: ["market_data", "news"]
+    
+  # Add logging specifics
+  logging:
+    level: ${oc.env:LOG_LEVEL,INFO}
+    format: json
+    request_logging: true
+    response_logging: true
+    error_logging: true
+    performance_logging: true
+    
+  monitoring:
+    enabled: true
+    metrics_port: 8086
+    metrics:
+      include_token_usage: true
+      include_response_times: true
+      include_error_rates: true
+      include_cache_stats: true
+    alerts:
+      error_threshold: 0.05  # 5% error rate
+      latency_threshold: 2000  # 2 seconds
+      cost_threshold: ${oc.env:COST_ALERT_THRESHOLD,100}  # daily cost limit

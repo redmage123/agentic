@@ -1,0 +1,16 @@
+service:
+  llm:
+    temperature: 0.8  # Higher temperature for development
+    max_tokens: 4000  # Larger context for testing
+    timeout: 60      # Longer timeout for debugging
+  
+  cache:
+    enabled: true
+    ttl: 300        # Shorter cache for development
+  
+  rate_limiting:
+    requests_per_minute: 100  # Higher limits for testing
+    
+  monitoring:
+    enabled: true
+    metrics_port: 8086

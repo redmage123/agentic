@@ -1,0 +1,36 @@
+generative_service:
+  _target_: services.generative_agent.domain.config.GenerativeServiceConfig
+  name: str
+  host: str
+  port: int
+  
+  llm:
+    provider: str
+    model: str
+    api_key: str
+    temperature: float
+    max_tokens: int
+    timeout: int
+    retry:
+      max_attempts: int
+      initial_delay: int
+      max_delay: int
+  
+  cache:
+    enabled: bool
+    ttl: int
+    max_size: int
+    
+  monitoring:
+    enabled: bool
+    metrics_port: int
+    health_check_enabled: bool
+    health_check_port: int
+    
+  rate_limiting:
+    requests_per_minute: int
+    burst_size: int
+    
+  circuit_breaker:
+    failure_threshold: int
+    reset_timeout: int

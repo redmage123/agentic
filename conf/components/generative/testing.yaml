@@ -1,0 +1,15 @@
+# conf/components/generative/testing.yaml
+service:
+  llm:
+    temperature: 1.0    # Maximum creativity for testing
+    max_tokens: 1000    # Smaller context for faster tests
+    timeout: 10         # Short timeout for tests
+  
+  cache:
+    enabled: false      # Disable cache for testing
+  
+  rate_limiting:
+    requests_per_minute: 1000  # High limit for testing
+    
+  monitoring:
+    enabled: false      # Disable monitoring for tests

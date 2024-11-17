@@ -1,0 +1,19 @@
+Apply these validation checks to your analysis:
+
+1. Data Quality:
+   - Completeness
+   - Accuracy
+   - Timeliness
+   - Relevance
+
+2. Analysis Validation:
+   - Methodology check
+   - Assumption testing
+   - Logic verification
+   - Bias assessment
+
+3. Conclusion Testing:
+   - Alternative scenarios
+   - Contrary evidence
+   - Edge cases
+   - Stress testing
