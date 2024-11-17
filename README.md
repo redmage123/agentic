@@ -189,6 +189,83 @@ classDef primary fill:#f9f,stroke:#333,stroke-width:2px
 classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
+``` mermaid
+sequenceDiagram
+    participant U as User Query
+    participant B as Base Prompt
+    participant F as Framework Prompts
+    participant S as Specialized Prompts
+    participant V as Validation
+    participant R as Response
+
+    U->>B: Financial Query
+    activate B
+    B->>F: Apply Analysis Frameworks
+    activate F
+
+    par Tree of Thoughts
+        F->>F: Apply ToT Framework
+    and Logic of Thoughts
+        F->>F: Apply LoT Framework
+    end
+
+    F->>S: Route to Specialized Analysis
+    activate S
+
+    par Pattern Analysis
+        S->>S: Pattern Recognition
+    and Risk Analysis
+        S->>S: Risk Evaluation
+    and Market Analysis
+        S->>S: Market Context
+    end
+
+    S->>V: Synthesize & Validate
+    activate V
+    V->>R: Generate Response
+    deactivate V
+    deactivate S
+    deactivate F
+    deactivate B
+    ```
+
+``` mermaid
+flowchart TD
+    subgraph "Prompt Composition"
+        A[Base Prompt] --> B{Analysis Type}
+
+        B -->|Risk Analysis| C[Risk Chain]
+        B -->|Pattern Analysis| D[Pattern Chain]
+        B -->|Full Analysis| E[Full Chain]
+
+        subgraph "Risk Chain"
+            C --> F1[Base]
+            F1 --> F2[Risk Evaluation]
+            F2 --> F3[Validation]
+            F3 --> F4[Synthesis]
+        end
+
+        subgraph "Pattern Chain"
+            D --> G1[Base]
+            G1 --> G2[Pattern Recognition]
+            G2 --> G3[Validation]
+            G3 --> G4[Synthesis]
+        end
+
+        subgraph "Full Chain"
+            E --> H1[Base]
+            H1 --> H2[All Specialized]
+            H2 --> H3[All Frameworks]
+            H3 --> H4[Validation]
+            H4 --> H5[Synthesis]
+        end
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C,D,E fill:#bfb,stroke:#333,stroke-width:2px
+
+   ``` 
 #### Financial Analysis Prompts
 Located in `services/generative_agent/prompts/financial_analysis/`:
 - `base.prompt`: Core financial analyst identity and approach
