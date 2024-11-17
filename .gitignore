@@ -5,4 +5,4 @@ tests/tca_tests/integration/__pycache__/*
 *.txt
 .env
 *.env
-!.env.template
+.env.template
