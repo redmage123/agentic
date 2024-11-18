@@ -1,0 +1,3 @@
+[core]
+    editor = \"C:/Program Files (x86)/Vim/vim91/gvim.exe\" --nofork
+
