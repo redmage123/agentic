@@ -1,0 +1,41 @@
+service:
+  name: generative_agent
+  hamiltonian:
+    model:
+      input_dim: 6  # 3 position + 3 momentum variables
+      hidden_dim: 256  # Increased for GPU optimization
+      num_layers: 3
+      activation: "tanh"
+      device: "cuda:0"  # Explicitly use first CUDA device
+      precision: "float32"  # or "float16" for mixed precision
+      cuda_optimization:
+        batch_size: 64  # Optimized for 2080's memory
+        cudnn_benchmark: true
+        enable_amp: true  # Automatic mixed precision
+        memory_fraction: 0.8  # Reserve 20% for system
+        
+    # Phase space configuration remains the same
+    phase_space:
+      position_features:
+        - "price_level"
+        - "volume_profile"
+        - "market_cap"
+      momentum_features:
+        - "price_velocity"
+        - "volume_momentum"
+        - "order_flow"
+      scaling: "standard"
+      
+    inference:
+      batch_size: 64  # Optimized for RTX 2080
+      prediction_horizon: 10
+      confidence_threshold: 0.7
+      max_scenarios: 5
+      parallel_scenarios: true  # Use GPU parallelization
+      
+    performance:
+      pin_memory: true
+      num_workers: 4  # For data loading
+      prefetch_factor: 2
+      persistent_workers: true
+      cudnn_enabled: true

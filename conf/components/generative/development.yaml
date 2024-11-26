@@ -14,3 +14,10 @@ service:
   monitoring:
     enabled: true
     metrics_port: 8086
+
+  hamiltonian:
+    model:
+      hidden_dim: 128  # Larger model for development
+      device: "cpu"    # Use CPU for development
+    inference:
+      batch_size: 8    # Smaller batches for debugging

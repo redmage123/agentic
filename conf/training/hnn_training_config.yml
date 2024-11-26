@@ -1,0 +1,29 @@
+# conf/training_config.yml
+
+data:
+  symbols:
+    - "SPY"    # S&P 500 ETF
+    - "QQQ"    # NASDAQ ETF
+    - "IWM"    # Russell 2000 ETF
+  start_date: "2020-01-01"
+  end_date: "2023-12-31"
+  sequence_length: 10
+  train_split: 0.8
+
+model:
+  input_dim: 12  # Number of features * 2 (for phase space)
+  hidden_dim: 64
+  num_layers: 3
+
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  num_epochs: 100
+  save_dir: "models/saved"
+  validation_interval: 5
+  early_stopping_patience: 10
+
+monitoring:
+  log_interval: 100
+  tensorboard: true
+  save_checkpoints: true
