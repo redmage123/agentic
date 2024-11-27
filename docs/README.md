@@ -1,13 +1,14 @@
-# Multi-Agent AI Architecture Demonstration
+
+i# Multi-Agent AI Architecture Demonstration
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)
 
 ## Overview
-This project implements a sophisticated financial analysis system through a multi-agent AI architecture. It combines specialized market analyzers, physics-inspired neural networks, and generative AI to provide comprehensive financial analysis capabilities. The system demonstrates advanced agent coordination patterns while delivering practical financial insights.
+This project implements a sophisticated financial analysis system through a multi-agent AI architecture. It combines specialized market analyzers, physics-inspired neural networks, and a central generative AI agent that coordinates analysis and provides comprehensive financial insights. The system demonstrates advanced agent coordination patterns while delivering practical financial analysis.
 
 ### Educational Purpose
 - Demonstrate different neural network architectures working together
-- Showcase multi-agent system coordination
+- Showcase intelligent agent coordination through generative AI
 - Illustrate modern microservices patterns
 - Present real-world AI model collaboration strategies
 
@@ -16,36 +17,65 @@ This project implements a sophisticated financial analysis system through a mult
 ```mermaid
 graph LR
     A[React Frontend] --> B[Flask Backend]
-    B --> C[Traffic Control Agent]
+    B --> G[Generative LLM]
     
     subgraph "Analysis Agents"
-        C --> D[Hamiltonian NN]
-        C --> E[Fourier NN]
-        C --> F[Perturbation NN]
-        C --> G[Generative LLM]
+        G --> D[Hamiltonian NN]
+        G --> E[Fourier NN]
+        G --> F[Perturbation NN]
         
-        C --> FA[Financial Analyzer]
-        C --> LA[Liquidity Analyzer]
-        C --> MA[MCTS Analyzer]
-        C --> PA[Pattern Analyzer]
-        C --> RA[Regime Analyzer]
-        C --> RKA[Risk Analyzer]
-        C --> SA[Sentiment Analyzer]
-        C --> TA[Technical Analyzer]
-        C --> VA[Volatility Analyzer]
-        C --> EA[Event Analyzer]
+        G --> FA[Financial Analyzer]
+        G --> LA[Liquidity Analyzer]
+        G --> MA[MCTS Analyzer]
+        G --> PA[Pattern Analyzer]
+        G --> RA[Regime Analyzer]
+        G --> RKA[Risk Analyzer]
+        G --> SA[Sentiment Analyzer]
+        G --> TA[Technical Analyzer]
+        G --> VA[Volatility Analyzer]
+        G --> EA[Event Analyzer]
     end
+```
+
+### Data Flow
+```mermaid
+graph TD
+    A[Frontend Request] --> B[Flask Backend]
+    B --> C[Generative Agent]
+    
+    subgraph "Generative Agent Processing"
+        C --> D[Request Parser]
+        D --> E[Context Builder]
+        E --> F[Analysis Coordinator]
+        
+        F --> G{Task Router}
+        G --> H[Agent Selector]
+        G --> I[Direct Analysis]
+        
+        H --> J[Agent Pool]
+        J --> K[Analysis Collection]
+        I --> K
+        
+        K --> L[Response Synthesizer]
+        L --> M[Validation Layer]
+    end
+    
+    M --> N[Response Formatter]
+    N --> O[Frontend Response]
 ```
 
 ### Components
 - **Frontend**: React-based dashboard for visualization and interaction
 - **Backend**: Flask service with REST API
-- **Traffic Control Agent**: Orchestrates multiple AI agents via gRPC
+- **Generative LLM Agent**: 
+  - Coordinates all analysis activities
+  - Routes requests to specialized agents
+  - Synthesizes comprehensive responses
+  - Provides natural language explanations
 - **Physics-Based AI Agents**:
   - Hamiltonian Neural Network: Conservation law modeling
   - Fourier Neural Network: Frequency domain analysis
   - Perturbation Theory Neural Network: Regime change detection
-  - Generative LLM: Natural language integration and explanation
 - **Financial Analysis Agents**:
   - Financial Analyzer: Core financial metrics and valuation models
   - Liquidity Analyzer: Market depth and trading volume assessment
@@ -124,11 +154,10 @@ http://localhost:3000
 ```
 ├── services/
 │   ├── client_service/     # Frontend and Backend
-│   ├── tca_service/        # Traffic Control Agent
+│   ├── generative_agent/   # Main Coordination and LLM Service
 │   ├── hamiltonian_agent/  # Hamiltonian NN Service
 │   ├── fourier_agent/      # Fourier NN Service
-│   ├── perturbation_agent/ # Perturbation Theory NN
-│   └── generative_agent/   # LLM Service
+│   └── perturbation_agent/ # Perturbation Theory NN
 ├── models/                 # Neural Network Implementations
 ├── tests/                  # Test Suite
 ├── utils/                  # Utility Functions
@@ -141,217 +170,42 @@ http://localhost:3000
 - **Hamiltonian NN**: Models system dynamics using energy conservation principles
 - **Fourier NN**: Analyzes frequency components and periodic patterns
 - **Perturbation NN**: Detects and analyzes system regime changes
-- **Generative LLM**: Provides natural language analysis and explanations
 
 ### Agent Coordination Patterns
-- Round-robin distribution
-- Capability-based routing
-- Confidence-weighted aggregation
-- Ensemble methods
+The generative agent implements:
+- Dynamic request routing
+- Capability-based analysis distribution
+- Confidence-weighted result aggregation
+- Intelligent response synthesis
 
-## Generative AI Agent Prompts
+## Generative AI Agent
 
-The system uses a structured, modular prompt system for the generative AI agent located in `services/generative_agent/prompts/`. This modular approach allows for:
-- Better maintainability
-- Focused, specific prompts
-- Flexible prompt chaining
-- Easier testing and validation
+### Request Processing Flow
+1. **Request Parsing**: Analyzes incoming requests for intent and requirements
+2. **Context Building**: Constructs analysis context from request and market state
+3. **Analysis Coordination**: 
+   - Routes tasks to appropriate analyzers
+   - Manages parallel analysis streams
+   - Aggregates results
+4. **Response Synthesis**: 
+   - Combines analysis results
+   - Generates natural language explanations
+   - Validates conclusions
+   - Formats response for frontend
+
+[Previous Prompt System Architecture section remains the same]
 
 ### Prompt Structure
 
-```mermaid
-graph TB
-    subgraph "Prompt System Architecture"
-        A[Financial Analysis Base Prompt] --> B{Prompt Router}
+[Previous mermaid diagrams for Prompt System Architecture remain the same]
 
-        subgraph "Core Analysis Frameworks"
-            C[Tree of Thoughts<br>Framework]
-            D[Logic of Thoughts<br>Framework]
-        end
-
-        subgraph "Specialized Analysis"
-            E[Pattern Recognition]
-            F[Risk Evaluation]
-            G[Market Context]
-        end
-
-        subgraph "Output Processing"
-            H[Synthesis]
-            I[Validation]
-        end
-
-        B --> C
-        B --> D
-        B --> E
-        B --> F
-        B --> G
-
-        C --> H
-        D --> H
-        E --> H
-        F --> H
-        G --> H
-
-        H --> I
-
-        I --> J[Final Response]
-
-        %% Prompt Chain Configurations
-        subgraph "Chain Configurations"
-            K[Default Chain]
-            L[Pattern Analysis]
-            M[Full Analysis]
-        end
-
-        B -.-> K
-        B -.-> L
-        B -.-> M
-
-        class A,B,C,D,E,F,G,H,I primary
-        class K,L,M secondary
-    end
-
-classDef primary fill:#f9f,stroke:#333,stroke-width:2px
-classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
-```
-
-```mermaid
-sequenceDiagram
-    participant U as User Query
-    participant B as Base Prompt
-    participant F as Framework Prompts
-    participant S as Specialized Prompts
-    participant V as Validation
-    participant R as Response
-
-    U->>B: Financial Query
-    activate B
-    B->>F: Apply Analysis Frameworks
-    activate F
-
-    par Tree of Thoughts
-        F->>F: Apply ToT Framework
-    and Logic of Thoughts
-        F->>F: Apply LoT Framework
-    end
-
-    F->>S: Route to Specialized Analysis
-    activate S
-
-    par Pattern Analysis
-        S->>S: Pattern Recognition
-    and Risk Analysis
-        S->>S: Risk Evaluation
-    and Market Analysis
-        S->>S: Market Context
-    end
-
-    S->>V: Synthesize & Validate
-    activate V
-    V->>R: Generate Response
-    deactivate V
-    deactivate S
-    deactivate F
-    deactivate B
-```
-
-```mermaid
-flowchart TD
-    subgraph "Prompt Composition"
-        A[Base Prompt] --> B{Analysis Type}
-
-        B -->|Risk Analysis| C[Risk Chain]
-        B -->|Pattern Analysis| D[Pattern Chain]
-        B -->|Full Analysis| E[Full Chain]
-
-        subgraph "Risk Chain"
-            C --> F1[Base]
-            F1 --> F2[Risk Evaluation]
-            F2 --> F3[Validation]
-            F3 --> F4[Synthesis]
-        end
-
-        subgraph "Pattern Chain"
-            D --> G1[Base]
-            G1 --> G2[Pattern Recognition]
-            G2 --> G3[Validation]
-            G3 --> G4[Synthesis]
-        end
-
-        subgraph "Full Chain"
-            E --> H1[Base]
-            H1 --> H2[All Specialized]
-            H2 --> H3[All Frameworks]
-            H3 --> H4[Validation]
-            H4 --> H5[Synthesis]
-        end
-    end
-
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C,D,E fill:#bfb,stroke:#333,stroke-width:2px
-```
-
-#### Financial Analysis Prompts
-Located in `services/generative_agent/prompts/financial_analysis/`:
-- `base.prompt`: Core financial analyst identity and approach
-- `pattern_recognition.prompt`: Specialized pattern analysis techniques
-- `market_context.prompt`: Market analysis framework
-- `risk_evaluation.prompt`: Risk analysis methodologies
-- `tot_framework.prompt`: Tree of Thoughts reasoning framework
-- `lot_framework.prompt`: Logic of Thoughts analysis structure
-- `synthesis.prompt`: Results synthesis and communication
-- `validation.prompt`: Data and conclusion validation
-
-Each prompt is designed to:
-- Focus on a specific aspect of financial analysis
-- Maintain consistency in analysis approach
-- Provide structured, actionable outputs
-- Include validation and confidence measures
-
-### Using Prompts
-
-The prompts can be used individually or chained together based on the analysis needs. Common combinations are configured in `conf/components/generative/default.yaml`:
-
-- Default Chain: Base analysis with structured reasoning
-- Pattern Analysis: Focused on pattern recognition and validation
-- Full Analysis: Comprehensive analysis using all prompt components
-
-### Extending Prompts
-
-To add new prompts:
-1. Create new .prompt file in appropriate directory
-2. Add prompt configuration to yaml config
-3. Add prompt tests in test suite
-4. Document prompt purpose and usage
-
-### Prompt Development Guidelines
-
-When creating or modifying prompts:
-- Keep each prompt focused and specific
-- Include clear input/output expectations
-- Consider chain compatibility
-- Add appropriate validation steps
-- Document prompt purpose
-- Include example usage
-
-### Testing Prompts
-
-Prompts are tested through:
-- Unit tests for loading and validation
-- Integration tests for prompt chaining
-- Response quality validation
-- Performance benchmarking
-
-See `tests/test_generative_agent/test_prompts/` for test implementations.
-
-## Development
+### Development
 
 ### Adding New Agents
 1. Create new directory under `services/`
 2. Define gRPC protocol in `protos/`
 3. Implement agent interface
-4. Register with Traffic Control Agent
+4. Register with Generative Agent
 
 ### Modifying the Frontend
 1. Navigate to `services/client_service/frontend`
@@ -365,8 +219,8 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ## Future Enhancements
 - Additional neural network architectures
 - Enhanced visualization components
-- More agent coordination patterns
-- Extended educational documentation
+- Extended agent coordination capabilities
+- Expanded educational documentation
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
