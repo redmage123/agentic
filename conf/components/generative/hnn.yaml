@@ -25,6 +25,19 @@ service:
         - "volume_momentum"
         - "order_flow"
       scaling: "standard"
+
+    mcts:
+      enabled: true
+      num_simulations: 1000
+      exploration_constant: 1.41
+      simulation_depth: 10
+      min_visits: 5
+      scenarios:
+        max_alternative: 5
+        probability_threshold: 0.1
+      parallel:
+        enabled: true
+        num_workers: 4
       
     inference:
       batch_size: 64  # Optimized for RTX 2080

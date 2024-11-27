@@ -3,7 +3,7 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)
 
 ## Overview
-This project demonstrates a multi-agent AI architecture through the implementation of a time series analysis system. It showcases different neural network paradigms, agent coordination patterns, and modern microservices architecture. The system integrates physics-inspired neural networks with generative AI to illustrate various approaches to AI system design.
+This project implements a sophisticated financial analysis system through a multi-agent AI architecture. It combines specialized market analyzers, physics-inspired neural networks, and generative AI to provide comprehensive financial analysis capabilities. The system demonstrates advanced agent coordination patterns while delivering practical financial insights.
 
 ### Educational Purpose
 - Demonstrate different neural network architectures working together
@@ -17,21 +17,46 @@ This project demonstrates a multi-agent AI architecture through the implementati
 graph LR
     A[React Frontend] --> B[Flask Backend]
     B --> C[Traffic Control Agent]
-    C --> D[Hamiltonian NN]
-    C --> E[Fourier NN]
-    C --> F[Perturbation NN]
-    C --> G[Generative LLM]
+    
+    subgraph "Analysis Agents"
+        C --> D[Hamiltonian NN]
+        C --> E[Fourier NN]
+        C --> F[Perturbation NN]
+        C --> G[Generative LLM]
+        
+        C --> FA[Financial Analyzer]
+        C --> LA[Liquidity Analyzer]
+        C --> MA[MCTS Analyzer]
+        C --> PA[Pattern Analyzer]
+        C --> RA[Regime Analyzer]
+        C --> RKA[Risk Analyzer]
+        C --> SA[Sentiment Analyzer]
+        C --> TA[Technical Analyzer]
+        C --> VA[Volatility Analyzer]
+        C --> EA[Event Analyzer]
+    end
 ```
 
 ### Components
 - **Frontend**: React-based dashboard for visualization and interaction
 - **Backend**: Flask service with REST API
 - **Traffic Control Agent**: Orchestrates multiple AI agents via gRPC
-- **AI Agents**:
+- **Physics-Based AI Agents**:
   - Hamiltonian Neural Network: Conservation law modeling
   - Fourier Neural Network: Frequency domain analysis
   - Perturbation Theory Neural Network: Regime change detection
   - Generative LLM: Natural language integration and explanation
+- **Financial Analysis Agents**:
+  - Financial Analyzer: Core financial metrics and valuation models
+  - Liquidity Analyzer: Market depth and trading volume assessment
+  - MCTS Analyzer: Monte Carlo Tree Search for scenario exploration
+  - Pattern Analyzer: Technical pattern recognition and validation
+  - Regime Analyzer: Market state and regime change detection
+  - Risk Analyzer: Comprehensive risk metrics and assessment
+  - Sentiment Analyzer: Market sentiment evaluation using multiple sources
+  - Technical Analyzer: Technical indicators and trend analysis
+  - Volatility Analyzer: Advanced volatility modeling and forecasting
+  - Event Impact Analyzer: Corporate and market event analysis
 
 ## Getting Started
 
@@ -67,14 +92,15 @@ npm install
 ./setup.sh
 docker-compose up
 ```
+
 ## Environment Setup
 
 This project requires certain environment variables to be set. To configure:
 
 1. Copy the environment template:
-   ```bash
-   cp .env.template .env
-   ```
+```bash
+cp .env.template .env
+```
 
 ## Usage
 
@@ -187,7 +213,6 @@ graph TB
 
 classDef primary fill:#f9f,stroke:#333,stroke-width:2px
 classDef secondary fill:#bbf,stroke:#333,stroke-width:2px
-
 ```
 
 ```mermaid
@@ -265,7 +290,6 @@ flowchart TD
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C,D,E fill:#bfb,stroke:#333,stroke-width:2px
-
 ```
 
 #### Financial Analysis Prompts
@@ -320,6 +344,7 @@ Prompts are tested through:
 - Performance benchmarking
 
 See `tests/test_generative_agent/test_prompts/` for test implementations.
+
 ## Development
 
 ### Adding New Agents

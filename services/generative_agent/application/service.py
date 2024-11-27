@@ -2,15 +2,13 @@
 
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+import asyncio
 
 from ..domain.models import (
-    AgentInfo, PredictionRequest, AgentPrediction,
-    AggregatedPrediction, RequestType, AgentStatus
+    AnalysisRequest, AnalysisResponse, PredictionRequest, 
+    AgentPrediction, AggregatedPrediction, RequestType
 )
-from ..domain.interfaces import (
-    RoutingStrategy, AgentManager, ResponseAggregator,
-    MetricsCollector, CircuitBreaker
-)
+from ..domain.exceptions import AnalysisError
 from .analyzers.financial_analyzer import FinancialAnalyzer
 from .analyzers.pattern_analyzer import PatternAnalyzer
 from .analyzers.regime_analyzer import MarketRegimeAnalyzer
@@ -18,148 +16,70 @@ from .analyzers.risk_analyzer import RiskAnalyzer
 from .analyzers.volatility_analyzer import VolatilityAnalyzer
 from .analyzers.liquidity_analyzer import LiquidityAnalyzer
 
-class GenerativeTCAService:
-    """
-    Integrated Generative Traffic Control Agent that combines:
-    - Agent coordination (from TCA)
-    - Market analysis (from Generative Agent)
-    - Response aggregation and enrichment
-    """
-    
-    def __init__(
-        self,
-        config: Dict[str, Any],
-        routing_strategy: RoutingStrategy,
-        agent_manager: AgentManager,
-        response_aggregator: ResponseAggregator,
-        metrics_collector: MetricsCollector,
-        circuit_breaker: CircuitBreaker
-    ):
+class GenerativeService:
+    def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self.routing_strategy = routing_strategy
-        self.agent_manager = agent_manager
-        self.response_aggregator = response_aggregator
-        self.metrics_collector = metrics_collector
-        self.circuit_breaker = circuit_breaker
         
         # Initialize analyzers
-        self.financial_analyzer = FinancialAnalyzer(
-            hamiltonian_client=None,  # Will be set after agent registration
-            fourier_client=None,
-            perturbation_client=None
-        )
-        self.pattern_analyzer = PatternAnalyzer()
-        self.regime_analyzer = MarketRegimeAnalyzer()
-        self.risk_analyzer = RiskAnalyzer()
-        self.volatility_analyzer = VolatilityAnalyzer()
-        self.liquidity_analyzer = LiquidityAnalyzer()
+        self.financial_analyzer = FinancialAnalyzer(config)
+        self.pattern_analyzer = PatternAnalyzer(config)
+        self.regime_analyzer = MarketRegimeAnalyzer(config)
+        self.risk_analyzer = RiskAnalyzer(config)
+        self.volatility_analyzer = VolatilityAnalyzer(config)
+        self.liquidity_analyzer = LiquidityAnalyzer(config)
 
-    async def process_request(
+    async def analyze_market(
         self,
-        request: PredictionRequest
-    ) -> AggregatedPrediction:
-        """Process prediction request with integrated analysis"""
+        request: AnalysisRequest
+    ) -> AnalysisResponse:
+        """Process market analysis request"""
         try:
-            # Record request metrics
-            await self.metrics_collector.record_request(
-                request.request_id,
-                request.request_type,
-                request.preferred_agents
-            )
-            
             start_time = datetime.now()
             
-            # Select appropriate agents
-            available_agents = await self.agent_manager.list_agents(
-                status=AgentStatus.ACTIVE,
-                request_type=request.request_type
+            # Extract market data
+            market_data = self._prepare_market_data(request)
+            
+            # Run all analyses concurrently
+            analysis_results = await self._run_analyses(market_data)
+            
+            # Synthesize results
+            synthesized_analysis = await self._synthesize_analyses(
+                analysis_results,
+                market_data
             )
             
-            selected_agents = await self.routing_strategy.select_agents(
-                request, available_agents
-            )
-            
-            # Get predictions from physics-based agents
-            predictions = await self._get_agent_predictions(
-                request, selected_agents
-            )
-            
-            # Analyze predictions using various analyzers
-            analysis_results = await self._analyze_predictions(
-                request, predictions
-            )
-            
-            # Aggregate and enrich results
-            enriched_predictions = self._enrich_predictions(
-                predictions, analysis_results
-            )
-            
-            aggregated_result = await self.response_aggregator.aggregate(
-                request, enriched_predictions
-            )
-            
-            # Record response metrics
             processing_time = (datetime.now() - start_time).total_seconds()
-            await self.metrics_collector.record_response(
-                request.request_id,
-                processing_time,
-                True
-            )
             
-            return aggregated_result
+            return AnalysisResponse(
+                request_id=request.request_id,
+                analysis_type=request.analysis_type,
+                summary=synthesized_analysis.summary,
+                detailed_analysis=synthesized_analysis.detailed_analysis,
+                recommendations=synthesized_analysis.recommendations,
+                confidence_score=self._calculate_confidence(analysis_results),
+                metadata={
+                    'processing_time': processing_time,
+                    'analysis_results': analysis_results,
+                    'market_context': market_data.get('context'),
+                },
+                processing_time=processing_time
+            )
 
         except Exception as e:
-            # Record failure metrics
-            processing_time = (datetime.now() - start_time).total_seconds()
-            await self.metrics_collector.record_response(
-                request.request_id,
-                processing_time,
-                False
-            )
-            raise
+            raise AnalysisError(f"Market analysis failed: {str(e)}")
 
-    async def _get_agent_predictions(
+    async def _run_analyses(
         self,
-        request: PredictionRequest,
-        agents: List[AgentInfo]
-    ) -> List[AgentPrediction]:
-        """Get predictions from physics-based agents"""
-        predictions = []
-        
-        for agent in agents:
-            if await self.circuit_breaker.can_execute(agent.agent_id):
-                try:
-                    prediction = await self._get_prediction(request, agent)
-                    predictions.append(prediction)
-                    await self.circuit_breaker.mark_success(agent.agent_id)
-                except Exception as e:
-                    await self.circuit_breaker.mark_failure(agent.agent_id)
-                    
-        return predictions
-
-    async def _analyze_predictions(
-        self,
-        request: PredictionRequest,
-        predictions: List[AgentPrediction]
+        market_data: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Analyze predictions using various analyzers"""
-        market_data = self._extract_market_data(request, predictions)
-        
-        # Run analyses concurrently
-        financial_analysis = self.financial_analyzer.analyze(market_data)
-        pattern_analysis = self.pattern_analyzer.analyze(market_data)
-        regime_analysis = self.regime_analyzer.analyze(market_data)
-        risk_analysis = self.risk_analyzer.analyze(market_data)
-        volatility_analysis = self.volatility_analyzer.analyze(market_data)
-        liquidity_analysis = self.liquidity_analyzer.analyze(market_data)
-        
+        """Run all analyses concurrently"""
         results = await asyncio.gather(
-            financial_analysis,
-            pattern_analysis,
-            regime_analysis,
-            risk_analysis,
-            volatility_analysis,
-            liquidity_analysis,
+            self.financial_analyzer.analyze(market_data),
+            self.pattern_analyzer.analyze(market_data),
+            self.regime_analyzer.analyze(market_data),
+            self.risk_analyzer.analyze(market_data),
+            self.volatility_analyzer.analyze(market_data),
+            self.liquidity_analyzer.analyze(market_data),
             return_exceptions=True
         )
         
@@ -172,59 +92,97 @@ class GenerativeTCAService:
             'liquidity': results[5] if not isinstance(results[5], Exception) else None
         }
 
-    def _enrich_predictions(
+    async def _synthesize_analyses(
         self,
-        predictions: List[AgentPrediction],
-        analysis_results: Dict[str, Any]
-    ) -> List[AgentPrediction]:
-        """Enrich agent predictions with analysis results"""
-        enriched_predictions = []
-        
-        for prediction in predictions:
-            # Add analysis metadata
-            enriched = AgentPrediction(
-                agent_id=prediction.agent_id,
-                prediction=prediction.prediction,
-                confidence=prediction.confidence,
-                processing_time=prediction.processing_time,
-                metadata={
-                    **prediction.metadata,
-                    'analysis_results': {
-                        'financial': analysis_results['financial'].summary if analysis_results['financial'] else None,
-                        'pattern': analysis_results['pattern'].summary if analysis_results['pattern'] else None,
-                        'regime': analysis_results['regime'].summary if analysis_results['regime'] else None,
-                        'risk': analysis_results['risk'].summary if analysis_results['risk'] else None,
-                        'volatility': analysis_results['volatility'].summary if analysis_results['volatility'] else None,
-                        'liquidity': analysis_results['liquidity'].summary if analysis_results['liquidity'] else None
-                    }
-                }
-            )
-            enriched_predictions.append(enriched)
-            
-        return enriched_predictions
-
-    def _extract_market_data(
-        self,
-        request: PredictionRequest,
-        predictions: List[AgentPrediction]
+        analysis_results: Dict[str, Any],
+        market_data: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Extract market data from request and predictions"""
-        # Implementation depends on your data format
-        pass
+        """Synthesize analysis results"""
+        # Collect all recommendations
+        recommendations = []
+        confidence_scores = []
+        
+        for analysis_type, result in analysis_results.items():
+            if result:
+                recommendations.extend(result.recommendations)
+                confidence_scores.append(result.confidence_score)
+        
+        # Prioritize and deduplicate recommendations
+        unique_recommendations = list(set(recommendations))
+        
+        # Generate summary
+        summary = self._generate_summary(analysis_results, market_data)
+        
+        # Generate detailed analysis
+        detailed_analysis = self._generate_detailed_analysis(
+            analysis_results,
+            market_data
+        )
+        
+        return {
+            'summary': summary,
+            'detailed_analysis': detailed_analysis,
+            'recommendations': unique_recommendations
+        }
 
-    async def start(self):
-        """Start the service"""
-        # Initialize connections to physics-based agents
-        agents = await self.agent_manager.list_agents()
-        for agent in agents:
-            if agent.agent_type == "hamiltonian":
-                self.financial_analyzer.hamiltonian_client = agent
-            elif agent.agent_type == "fourier":
-                self.financial_analyzer.fourier_client = agent
-            elif agent.agent_type == "perturbation":
-                self.financial_analyzer.perturbation_client = agent
+    def _prepare_market_data(
+        self,
+        request: AnalysisRequest
+    ) -> Dict[str, Any]:
+        """Prepare market data for analysis"""
+        return {
+            'prices': request.market_data.get('prices', []),
+            'volumes': request.market_data.get('volumes', []),
+            'timestamps': request.market_data.get('timestamps', []),
+            'market_caps': request.market_data.get('market_caps', []),
+            'indicators': request.market_data.get('indicators', {}),
+            'context': request.market_data.get('context', {})
+        }
 
-    async def stop(self):
-        """Stop the service"""
-        # Cleanup
-        pass
+    def _calculate_confidence(
+        self,
+        analysis_results: Dict[str, Any]
+    ) -> float:
+        """Calculate overall confidence score"""
+        scores = []
+        weights = {
+            'financial': 0.25,
+            'pattern': 0.15,
+            'regime': 0.2,
+            'risk': 0.2,
+            'volatility': 0.1,
+            'liquidity': 0.1
+        }
+        
+        for analysis_type, result in analysis_results.items():
+            if result:
+                scores.append(
+                    result.confidence_score * weights[analysis_type]
+                )
+                
+        return sum(scores) / sum(weights.values()) if scores else 0.0
+
+    def _generate_summary(
+        self,
+        analysis_results: Dict[str, Any],
+        market_data: Dict[str, Any]
+    ) -> str:
+        """Generate analysis summary"""
+        summaries = []
+        for analysis_type, result in analysis_results.items():
+            if result:
+                summaries.append(result.summary)
+        return "\n\n".join(summaries)
+
+    def _generate_detailed_analysis(
+        self,
+        analysis_results: Dict[str, Any],
+        market_data: Dict[str, Any]
+    ) -> str:
+        """Generate detailed analysis"""
+        analyses = []
+        for analysis_type, result in analysis_results.items():
+            if result:
+                analyses.append(f"## {analysis_type.title()} Analysis")
+                analyses.append(result.detailed_analysis)
+        return "\n\n".join(analyses)

@@ -2,18 +2,76 @@ syntax = "proto3";
 
 package generative_service;
 
-// Service for Generative Neural Network predictions
-service GenerativePredictionService {
-  rpc Predict (PredictionRequest) returns (PredictionResponse);
+service GenerativeService {
+    rpc AnalyzeMarket(MarketAnalysisRequest) returns (MarketAnalysisResponse);
+    rpc GetStatus(StatusRequest) returns (StatusResponse);
 }
 
-// Message defining the input structure for predictions
-message PredictionRequest {
-  string input_data = 1; // Input data for Generative Neural Network
+message MarketAnalysisRequest {
+    string request_id = 1;
+    MarketData market_data = 2;
+    OptionsData options_data = 3;
+    map<string, string> metadata = 4;
 }
 
-// Message defining the structure of the prediction response
-message PredictionResponse {
-  string result = 1;       // Prediction result
-  string details = 2;      // Additional details
+message MarketData {
+    string symbol = 1;
+    repeated double prices = 2;
+    repeated double volumes = 3;
+    repeated int64 timestamps = 4;
+    double market_cap = 5;
+    map<string, double> indicators = 6;
+    TradingData trading_data = 7;
+}
+
+message TradingData {
+    repeated double high = 1;
+    repeated double low = 2;
+    repeated double open = 3;
+}
+
+message OptionsData {
+    string symbol = 1;
+    int64 expiry = 2;
+    double strike = 3;
+    string option_type = 4;
+    double price = 5;
+    double implied_vol = 6;
+    int32 volume = 7;
+    int32 open_interest = 8;
+}
+
+message MarketAnalysisResponse {
+    string request_id = 1;
+    string summary = 2;
+    string detailed_analysis = 3;
+    repeated string recommendations = 4;
+    float confidence_score = 5;
+    map<string, AnalysisResult> analysis_results = 6;
+    map<string, string> metadata = 7;
+}
+
+message AnalysisResult {
+    string summary = 1;
+    string detailed_analysis = 2;
+    repeated string recommendations = 3;
+    float confidence_score = 4;
+    map<string, string> metrics = 5;
+}
+
+message StatusRequest {
+}
+
+message StatusResponse {
+    string status = 1;
+    SystemMetrics metrics = 2;
+}
+
+message SystemMetrics {
+    int32 requests_total = 1;
+    int32 requests_successful = 2;
+    float average_latency = 3;
+    float error_rate = 4;
+    map<string, double> prediction_metrics = 5;
+    map<string, string> system_metrics = 6;
 }
